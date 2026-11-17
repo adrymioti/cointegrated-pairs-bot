@@ -1,0 +1,172 @@
+{
+  "label": "REAL DATA",
+  "created_utc": "2026-11-17T05:54:13.275631+00:00",
+  "config_hash": "93011ea95be2",
+  "git_commit": "5491c373f2308fe2129968a57a30d664eb050652",
+  "python": "3.9.7",
+  "packages": {
+    "numpy": "1.26.4",
+    "pandas": "2.3.3",
+    "scipy": "1.13.1",
+    "statsmodels": "0.14.6",
+    "matplotlib": "3.9.4",
+    "PyYAML": "6.0.3"
+  },
+  "input_hashes": {
+    "close.csv.gz": "1d25b4be6cfac3546933d3e9b56571ddd40f0c7f2284a1e1214a2db0f59bd3c8",
+    "data_quality.csv": "46e1774a2c038b79d35e66104b6f429f8ab118d47d216fff71d2b416b79b3918",
+    "exclusion_log.csv": "78d2cba50edb63959a2f23c0e3c41c4661786ba001f0a3daeba1495272941172",
+    "high.csv.gz": "434e3dbfefa86ce533147294be749e5e22f6d9e541c7c56669bb90d9e339670f",
+    "low.csv.gz": "07a8b611e1db56c6dcb70d88424a6c94d889e4336d10764161c034343b66d890",
+    "open.csv.gz": "7887297be296affd61095af67a07073e6c929c61682a236ca35ef0452e022eda",
+    "quote_volume.csv.gz": "8bcbbc66f7752b3d504ee67cb5a2506f8e4094490968350ecfeac6ec56286cae",
+    "volume.csv.gz": "b825d4665d2276ec023935be0e25848a60b1cac6a95de834f694cc7b60dad83a"
+  },
+  "config": {
+    "project": {
+      "name": "crypto-pairs-stat-arb",
+      "model_version": "baseline-v1"
+    },
+    "data": {
+      "source": "Binance public historical data (data.binance.vision), spot, monthly 1h klines",
+      "base_url": "https://data.binance.vision",
+      "market": "spot",
+      "interval": "1h",
+      "start": "2022-01-01 00:00",
+      "end": "2025-12-31 23:00",
+      "assets": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "XRPUSDT",
+        "ADAUSDT",
+        "SOLUSDT",
+        "DOGEUSDT",
+        "LTCUSDT",
+        "LINKUSDT",
+        "DOTUSDT",
+        "AVAXUSDT",
+        "BCHUSDT",
+        "ATOMUSDT",
+        "TRXUSDT",
+        "ETCUSDT"
+      ],
+      "min_coverage": 0.95,
+      "min_median_quote_volume": 200000
+    },
+    "paths": {
+      "raw": "data/raw",
+      "processed": "data/processed",
+      "results": "results"
+    },
+    "split": {
+      "dev_fraction": 0.6,
+      "validation_fraction_of_dev": 0.4
+    },
+    "selection": {
+      "coint_trend": "c",
+      "autolag": "aic",
+      "maxlag": null,
+      "family_alpha": 0.05,
+      "max_pairs": 3,
+      "beta_min": 0.2,
+      "beta_max": 5.0,
+      "beta_stability_tol": 0.5,
+      "half_life_min_hours": 4,
+      "half_life_max_hours": 336,
+      "min_obs_fraction": 0.9
+    },
+    "signals": {
+      "lookback": 168,
+      "entry_z": 2.0,
+      "exit_z": 0.5,
+      "stop_z": 3.5,
+      "max_hold_bars": 336
+    },
+    "execution": {
+      "delay_bars": 0,
+      "fee_bps": 5,
+      "slippage_bps": 5,
+      "borrow_rate_annual": 0.1,
+      "leg_fail_prob": 0.0,
+      "seed": 7
+    },
+    "portfolio": {
+      "initial_equity": 100000.0,
+      "pair_gross_frac": 0.2,
+      "max_gross": 1.0,
+      "max_pair": 0.2,
+      "max_asset": 0.3,
+      "collateral_ratio": 1.0,
+      "dd_halt": 0.2,
+      "halt_cooldown_bars": 720,
+      "hours_per_year": 8760
+    },
+    "walk_forward": {
+      "train_hours": 4320,
+      "trade_hours": 720,
+      "step_hours": 720
+    },
+    "robustness": {
+      "entry_grid": [
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "exit_grid": [
+        0.0,
+        0.25,
+        0.5,
+        0.75
+      ],
+      "lookback_grid": [
+        72,
+        168,
+        336
+      ],
+      "cost_grid_bps": [
+        0,
+        5,
+        10,
+        20,
+        30,
+        40,
+        60
+      ],
+      "stress_cost_bps": [
+        5,
+        10,
+        20
+      ],
+      "bootstrap_block": 168,
+      "bootstrap_reps": 1000
+    },
+    "regimes": {
+      "benchmark": "BTCUSDT",
+      "window_hours": 168
+    },
+    "live": {
+      "ws_url": "wss://stream.binance.com:9443/stream",
+      "rest_url": "https://api.binance.com/api/v3/klines",
+      "grace_seconds": 600,
+      "stale_seconds": 180,
+      "state_dir": "results/live"
+    }
+  },
+  "summary": {
+    "label": "REAL DATA",
+    "split": {
+      "dev_start": "2022-01-01 00:00:00+00:00",
+      "val_start": "2023-06-10 22:00:00+00:00",
+      "test_start": "2024-05-26 14:00:00+00:00",
+      "test_end": "2026-01-01 00:00:00+00:00"
+    },
+    "n_pairs_tested": 105,
+    "n_pairs_selected": 0,
+    "selected_pairs": [],
+    "grid_cells": 0,
+    "note": "No pair passed Holm + filters on the development period. This is reported as the result; the standard was not lowered."
+  }
+}

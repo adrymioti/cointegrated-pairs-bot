@@ -1,0 +1,90 @@
+project:
+  name: crypto-pairs-stat-arb
+  model_version: baseline-v1
+ 
+data:
+  source: Binance public historical data (data.binance.vision), spot, monthly 1h klines
+  base_url: https://data.binance.vision
+  market: spot
+  interval: 1h
+  start: "2022-01-01 00:00"        # UTC, first hourly candle
+  end: "2025-12-31 23:00"          # UTC, last hourly candle
+  # Research universe, NOT investment recommendations. Chosen with hindsight from
+  # today's large caps -> survivorship bias; disclosed in the paper.
+  assets: [BTCUSDT, ETHUSDT, BNBUSDT, XRPUSDT, ADAUSDT, SOLUSDT, DOGEUSDT, LTCUSDT,
+           LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, ATOMUSDT, TRXUSDT, ETCUSDT]
+  min_coverage: 0.95               # asset needs >=95% of hourly bars inside the training window
+  min_median_quote_volume: 200000  # median hourly quote volume (USDT) inside the training window
+ 
+paths:
+  raw: data/raw
+  processed: data/processed
+  results: results
+ 
+split:
+  dev_fraction: 0.60               # chronological: first 60% development, last 40% final test
+  validation_fraction_of_dev: 0.40 # last 40% of development = validation for the sensitivity grid
+ 
+selection:
+  coint_trend: c                   # statsmodels coint(trend=...) fixed in advance
+  autolag: aic
+  maxlag: null
+  family_alpha: 0.05               # Holm family-wise level over ALL pairs tested
+  max_pairs: 3                     # roadmap: carry forward at most 3-5
+  beta_min: 0.2                    # simple long/short baseline: positive, reasonable beta
+  beta_max: 5.0
+  beta_stability_tol: 0.5          # |beta_half2 - beta_half1| / beta_full must be below this
+  half_life_min_hours: 4
+  half_life_max_hours: 336
+  min_obs_fraction: 0.90           # aligned complete observations needed for a pair
+ 
+signals:
+  lookback: 168                    # hours, rolling mean/std of the PREVIOUS L completed spreads
+  entry_z: 2.0
+  exit_z: 0.5
+  stop_z: 3.5
+  max_hold_bars: 336
+ 
+execution:
+  delay_bars: 0                    # 0 = fill at the open of the next candle after the signal candle closes
+  fee_bps: 5                       # explicit fee per executed notional, per leg, per execution
+  slippage_bps: 5                  # applied to fill price (adverse). fee+slippage = 10 bps baseline scenario
+  borrow_rate_annual: 0.10         # hypothetical borrow cost on short notional
+  leg_fail_prob: 0.0               # stress: probability the second leg of an entry fails
+  seed: 7
+ 
+portfolio:
+  initial_equity: 100000.0
+  pair_gross_frac: 0.20            # G = 20% of equity per pair at entry
+  max_gross: 1.00
+  max_pair: 0.20
+  max_asset: 0.30                  # aggregated across pairs sharing an asset
+  collateral_ratio: 1.0            # short proceeds locked as collateral
+  dd_halt: 0.20                    # halt entries + flatten at 20% drawdown from peak
+  halt_cooldown_bars: 720
+  hours_per_year: 8760             # K = 24 * 365
+ 
+walk_forward:
+  train_hours: 4320                # 180 days
+  trade_hours: 720                 # 30 days, non-overlapping
+  step_hours: 720
+ 
+robustness:
+  entry_grid: [1.5, 1.75, 2.0, 2.25, 2.5]
+  exit_grid: [0.0, 0.25, 0.5, 0.75]
+  lookback_grid: [72, 168, 336]
+  cost_grid_bps: [0, 5, 10, 20, 30, 40, 60]   # total fee+slippage, split 50/50
+  stress_cost_bps: [5, 10, 20]
+  bootstrap_block: 168
+  bootstrap_reps: 1000
+ 
+regimes:
+  benchmark: BTCUSDT
+  window_hours: 168
+ 
+live:
+  ws_url: wss://stream.binance.com:9443/stream
+  rest_url: https://api.binance.com/api/v3/klines
+  grace_seconds: 600
+  stale_seconds: 180
+  state_dir: results/live

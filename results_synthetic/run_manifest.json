@@ -1,0 +1,291 @@
+{
+  "label": "SYNTHETIC",
+  "created_utc": "2026-11-17T05:21:38.470467+00:00",
+  "config_hash": "93011ea95be2",
+  "git_commit": "5491c373f2308fe2129968a57a30d664eb050652",
+  "python": "3.9.7",
+  "packages": {
+    "numpy": "1.26.4",
+    "pandas": "2.3.3",
+    "scipy": "1.13.1",
+    "statsmodels": "0.14.6",
+    "matplotlib": "3.9.4",
+    "PyYAML": "6.0.3"
+  },
+  "input_hashes": {
+    "close.csv.gz": "e07faa29ded137f7a226fd6633cc5aa1a680e8e80e560c4aa70b04e37cdf7985",
+    "high.csv.gz": "0d8734c451bc1084addf18b1dd6c2dc346200019c0bf092a551a691b46920c4e",
+    "low.csv.gz": "1c93fdf84915e111fcbd16aba1cddd6e5d685ad67d98cdb83abe852abf18269f",
+    "open.csv.gz": "7bf8e5d83884edaef7ee6294aa149a0ab3a9d680014af21b18d90b5cda7fae62",
+    "quote_volume.csv.gz": "c2f01bc837c564d793e8225296fe13a2c5581c7a9ed55d9f740b3162b8dc5fef",
+    "volume.csv.gz": "1af7ea94cd3ff2b50b88d848d8c8164eee0c038afed33f4bb354ab85473ecff9"
+  },
+  "config": {
+    "project": {
+      "name": "crypto-pairs-stat-arb",
+      "model_version": "baseline-v1"
+    },
+    "data": {
+      "source": "Binance public historical data (data.binance.vision), spot, monthly 1h klines",
+      "base_url": "https://data.binance.vision",
+      "market": "spot",
+      "interval": "1h",
+      "start": "2022-01-01 00:00",
+      "end": "2025-12-31 23:00",
+      "assets": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "XRPUSDT",
+        "ADAUSDT",
+        "SOLUSDT",
+        "DOGEUSDT",
+        "LTCUSDT",
+        "LINKUSDT",
+        "DOTUSDT",
+        "AVAXUSDT",
+        "BCHUSDT",
+        "ATOMUSDT",
+        "TRXUSDT",
+        "ETCUSDT"
+      ],
+      "min_coverage": 0.95,
+      "min_median_quote_volume": 200000
+    },
+    "paths": {
+      "raw": "data/raw",
+      "processed": "data/processed",
+      "results": "results"
+    },
+    "split": {
+      "dev_fraction": 0.6,
+      "validation_fraction_of_dev": 0.4
+    },
+    "selection": {
+      "coint_trend": "c",
+      "autolag": "aic",
+      "maxlag": null,
+      "family_alpha": 0.05,
+      "max_pairs": 3,
+      "beta_min": 0.2,
+      "beta_max": 5.0,
+      "beta_stability_tol": 0.5,
+      "half_life_min_hours": 4,
+      "half_life_max_hours": 336,
+      "min_obs_fraction": 0.9
+    },
+    "signals": {
+      "lookback": 168,
+      "entry_z": 2.0,
+      "exit_z": 0.5,
+      "stop_z": 3.5,
+      "max_hold_bars": 336
+    },
+    "execution": {
+      "delay_bars": 0,
+      "fee_bps": 5,
+      "slippage_bps": 5,
+      "borrow_rate_annual": 0.1,
+      "leg_fail_prob": 0.0,
+      "seed": 7
+    },
+    "portfolio": {
+      "initial_equity": 100000.0,
+      "pair_gross_frac": 0.2,
+      "max_gross": 1.0,
+      "max_pair": 0.2,
+      "max_asset": 0.3,
+      "collateral_ratio": 1.0,
+      "dd_halt": 0.2,
+      "halt_cooldown_bars": 720,
+      "hours_per_year": 8760
+    },
+    "walk_forward": {
+      "train_hours": 4320,
+      "trade_hours": 720,
+      "step_hours": 720
+    },
+    "robustness": {
+      "entry_grid": [
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "exit_grid": [
+        0.0,
+        0.25,
+        0.5,
+        0.75
+      ],
+      "lookback_grid": [
+        72,
+        168,
+        336
+      ],
+      "cost_grid_bps": [
+        0,
+        5,
+        10,
+        20,
+        30,
+        40,
+        60
+      ],
+      "stress_cost_bps": [
+        5,
+        10,
+        20
+      ],
+      "bootstrap_block": 168,
+      "bootstrap_reps": 1000
+    },
+    "regimes": {
+      "benchmark": "BTCUSDT",
+      "window_hours": 168
+    },
+    "live": {
+      "ws_url": "wss://stream.binance.com:9443/stream",
+      "rest_url": "https://api.binance.com/api/v3/klines",
+      "grace_seconds": 600,
+      "stale_seconds": 180,
+      "state_dir": "results/live"
+    }
+  },
+  "summary": {
+    "label": "SYNTHETIC",
+    "split": {
+      "dev_start": "2022-01-01 00:00:00+00:00",
+      "val_start": "2023-06-10 22:00:00+00:00",
+      "test_start": "2024-05-26 14:00:00+00:00",
+      "test_end": "2026-01-01 00:00:00+00:00"
+    },
+    "n_pairs_tested": 78,
+    "n_pairs_selected": 3,
+    "selected_pairs": [
+      {
+        "pair": "ADAUSDT-SOLUSDT",
+        "alpha": -0.1880794741368983,
+        "beta": 0.6773340452411051
+      },
+      {
+        "pair": "BTCUSDT-ETHUSDT",
+        "alpha": 0.01724041091324806,
+        "beta": 1.0935016760418597
+      },
+      {
+        "pair": "ETHUSDT-SOLUSDT",
+        "alpha": 3.17328565230351,
+        "beta": 0.27271945911417145
+      }
+    ],
+    "grid_cells": 60,
+    "break_even_cost_bps": Infinity,
+    "frozen_net": {
+      "n_hours": 14026,
+      "start": "2024-05-26 14:00:00+00:00",
+      "end": "2025-12-31 23:00:00+00:00",
+      "total_return": 1.1581615834793393,
+      "ann_vol": 0.12022187743125862,
+      "sharpe": 4.056502000947782,
+      "max_drawdown": 0.04857662639360483,
+      "mean_hourly_return": 5.567126556593603e-05,
+      "note": "Sharpe uses sqrt(K) scaling; serial correlation can make it misleading",
+      "n_trades": 243,
+      "win_rate": 0.8395061728395061,
+      "mean_win": 729.7410379223942,
+      "mean_loss": -847.4618817495775,
+      "mean_net_pnl": 476.60970513553445,
+      "mean_hold_hours": 50.135802469135804,
+      "exposure": 0.6366034507343505,
+      "turnover": 96.94767683967616,
+      "fees": 7309.121937283498,
+      "slippage": 7309.155058106777,
+      "borrow": 2048.8610141040635
+    },
+    "frozen_gross": {
+      "n_hours": 14026,
+      "start": "2024-05-26 14:00:00+00:00",
+      "end": "2025-12-31 23:00:00+00:00",
+      "total_return": 1.3248329635742828,
+      "ann_vol": 0.11554441611019656,
+      "sharpe": 4.618078903786396,
+      "max_drawdown": 0.04509141779687742,
+      "mean_hourly_return": 6.091246923388307e-05,
+      "note": "Sharpe uses sqrt(K) scaling; serial correlation can make it misleading",
+      "n_trades": 243,
+      "win_rate": 0.8395061728395061,
+      "mean_win": 729.7410379223942,
+      "mean_loss": -847.4618817495775,
+      "mean_net_pnl": 476.60970513553445,
+      "mean_hold_hours": 50.135802469135804,
+      "exposure": 0.6366034507343505,
+      "turnover": 96.94767683967616,
+      "fees": 0.0,
+      "slippage": 0.0,
+      "borrow": 0.0
+    },
+    "walk_forward_net": {
+      "n_hours": 14026,
+      "start": "2024-05-26 14:00:00+00:00",
+      "end": "2025-12-31 23:00:00+00:00",
+      "total_return": 0.7124820093750726,
+      "ann_vol": 0.08948554698663512,
+      "sharpe": 3.799322909103606,
+      "max_drawdown": 0.0338944090149601,
+      "mean_hourly_return": 3.881101469177967e-05,
+      "note": "Sharpe uses sqrt(K) scaling; serial correlation can make it misleading",
+      "n_trades": 210,
+      "win_rate": 0.8142857142857143,
+      "mean_win": 560.9429527923966,
+      "mean_loss": -632.6421535895323,
+      "mean_net_pnl": 339.27714732146694,
+      "mean_hold_hours": 43.05714285714286,
+      "exposure": 0.48873520604591475,
+      "turnover": 84.29451353551622,
+      "fees": 5657.412592715129,
+      "slippage": 5657.433561168682,
+      "borrow": 1310.7696736051435
+    },
+    "references": {
+      "cash_zero_return": 0.0,
+      "buy_hold_total_return": -0.2765939386032996,
+      "buy_hold_max_dd": 0.54627202864762
+    },
+    "bootstrap": {
+      "sharpe_5": 3.168318677876533,
+      "sharpe_95": 4.974190265597659,
+      "total_return_5": 0.8140393711965239,
+      "total_return_95": 1.5623799868104733,
+      "block": 168,
+      "reps": 1000
+    },
+    "regime_info": {
+      "vol_threshold": 0.005940560627219111,
+      "window": 168
+    }
+  },
+  "params": {
+    "lookback": 168,
+    "entry_z": 2.0,
+    "exit_z": 0.5,
+    "stop_z": 3.5,
+    "max_hold_bars": 336,
+    "delay_bars": 0,
+    "fee_bps": 5,
+    "slippage_bps": 5,
+    "borrow_rate_annual": 0.1,
+    "leg_fail_prob": 0.0,
+    "seed": 7,
+    "pair_gross_frac": 0.2,
+    "max_gross": 1.0,
+    "max_pair": 0.2,
+    "max_asset": 0.3,
+    "collateral_ratio": 1.0,
+    "dd_halt": 0.2,
+    "halt_cooldown_bars": 720,
+    "hours_per_year": 8760,
+    "model_version": "baseline-v1"
+  }
+}
